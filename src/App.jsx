@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TaskList, IconButton, AddFileIcon } from "./components";
+import { TaskList, IconButton, AddIcon } from "./components";
 import "./App.less";
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
       <h1>Todo</h1>
       <div>
         <TaskList />
-        <IconButton Icon={AddFileIcon} />
+        <IconButton Icon={AddIcon} />
       </div>
     </div>
   );
