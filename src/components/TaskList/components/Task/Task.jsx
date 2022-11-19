@@ -1,11 +1,14 @@
 import { useState } from "react";
 import classNames from "classnames";
 
-import { Checkbox } from "../../../Checkbox";
-import { OpenButton } from "../../../OpenButton";
-import { IconButton } from "../../../IconButton";
-import { Button } from "../../../Button";
-import { AddFileIcon } from "../../../Icons";
+import {
+  AddFileIcon,
+  Checkbox,
+  IconButton,
+  Button,
+  OpenButton,
+} from "../../../../components";
+
 import "./Task.less";
 
 export const Task = ({ title }) => {
