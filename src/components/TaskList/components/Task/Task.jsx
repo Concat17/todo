@@ -11,21 +11,31 @@ import {
 
 import "./Task.less";
 
-export const Task = ({ title }) => {
+export const Task = ({ title, open, editing, onClick }) => {
   const [done, setDone] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState(false);
-
+  // const [isOpen, setIsOpen] = useState(open); TODO: figure out why doent work
+  // const [isEditing, setIsEditing] = useState(true);
+  // console.log(open, isEditing);
   return (
     <li className="task-container">
       <div className="overview">
         <div className="left">
           <Checkbox checked={done} onChange={setDone} />
         </div>
-        {editing ? (
-          <input type="text" defaultValue={title} className="editable-field" />
+        {open ? (
+          <input
+            type="text"
+            defaultValue={title}
+            placeholder={"Enter task title"}
+            className="editable-field"
+          />
         ) : (
-          <span className={classNames({ strike: done })}>{title}</span>
+          <span
+            onClick={onClick}
+            className={classNames("title", { strike: done })}
+          >
+            {title}
+          </span>
         )}
         <div className="right">
           <input
@@ -33,15 +43,28 @@ export const Task = ({ title }) => {
             defaultValue="2022-07-22"
             onChange={(e) => console.log(e.target.value)}
           />
-          <OpenButton open={open} onClick={() => setOpen((p) => !p)} />
         </div>
       </div>
 
       <div className={classNames("description", { hidden: !open })}>
         <IconButton Icon={AddFileIcon} />
-        <span>kek</span>
+        {open ? (
+          <input
+            type="text"
+            defaultValue={title}
+            placeholder={"Enter task title"}
+            className="editable-field"
+          />
+        ) : (
+          <span
+            onClick={onClick}
+            className={classNames("title", { strike: done })}
+          >
+            {title}
+          </span>
+        )}
         <div>
-          <Button onClick={() => setEditing((p) => !p)}>Edit</Button>
+          <Button onClick={() => setIsEditing((p) => !p)}>Edit</Button>
           <Button>Save</Button>
           <Button>Remove</Button>
         </div>
