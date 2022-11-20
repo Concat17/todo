@@ -4,31 +4,41 @@ import { Task } from "./components";
 import { IconButton, AddIcon } from "../../components";
 import "./TaskList.less";
 
-const tasks = ["пресс качат", "бегит", "турник", "анжуманя"];
-
 export const TaskList = () => {
-  const [isAdding, setIsAdding] = useState(false);
+  const [tasks, setTasks] = useState([
+    "пресс качат",
+    "бегит",
+    "турник",
+    "анжуманя",
+  ]);
 
   const [openTask, setOpenTask] = useState("");
-  return useMemo(
-    () => (
-      <>
-        <ul>
-          {tasks.map((t, i) => (
-            <Task
-              key={i}
-              title={t}
-              open={t === openTask}
-              onClick={() => (setOpenTask(t), console.log(t))}
-            />
-          ))}
-          {isAdding && <Task open editing />}
-        </ul>
-        {!isAdding && (
-          <IconButton Icon={AddIcon} onClick={() => setIsAdding(true)} />
+
+  return (
+    <>
+      <ul>
+        {tasks.map((t, i) => (
+          <Task
+            key={i}
+            title={t}
+            open={t === openTask}
+            onOpen={(title) => {
+              setOpenTask(title);
+            }}
+          />
+        ))}
+        {openTask === "adding" && (
+          <Task
+            open={openTask === "adding"}
+            onSave={(t) => {
+              setTasks([...tasks, t]);
+            }}
+          />
         )}
-      </>
-    ),
-    [openTask]
+      </ul>
+      {!(openTask === "adding") && (
+        <IconButton Icon={AddIcon} onClick={() => setOpenTask("adding")} />
+      )}
+    </>
   );
 };

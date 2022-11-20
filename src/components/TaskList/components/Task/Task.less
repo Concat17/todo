@@ -7,60 +7,46 @@
 
   font-size: 2rem;
 
-  .overview {
+  display: grid;
+  grid-template-columns: 20% 1fr 20%;
+  row-gap: 1em;
+
+  .left {
     display: flex;
-    justify-content: space-between;
-
-    .left {
-      display: flex;
-    }
-
-    .right {
-      display: flex;
-      justify-content: end;
-
-      gap: 0.5em;
-    }
-
-    .left,
-    .right {
-      width: 20%;
-    }
-
-    .title {
-      flex-grow: 1;
-
-      cursor: pointer;
-    }
   }
 
-  .strike {
-    text-decoration: line-through;
+  .title {
+    flex-grow: 1;
+
+    // cursor: pointer;
   }
 
-  .description {
-    margin-top: 1em;
-
+  .right {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: end;
+    gap: 0.5em;
   }
 
-  .hidden {
-    display: none;
+  .right-controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .editable-field {
-    font-size: 2rem;
-    color: inherit;
-
-    border: 0;
+    text-align: center;
 
     border: solid white 1px;
     border-radius: 8px;
 
+    color: inherit;
     background-color: inherit;
 
-    text-align: center;
+    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 2rem;
+  }
+
+  .strike {
+    text-decoration: line-through;
   }
 }
