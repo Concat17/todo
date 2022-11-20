@@ -1,27 +1,30 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { Task } from "./components";
 import { IconButton, AddIcon } from "../../components";
+import { useCreateTodo, useGetTodos } from "../../hooks";
+import { QUERY_KEYS } from "../../constants";
+import { queryClient } from "../../utils";
+
 import "./TaskList.less";
 
 export const TaskList = () => {
-  const [tasks, setTasks] = useState([
-    "пресс качат",
-    "бегит",
-    "турник",
-    "анжуманя",
-  ]);
+  const { data: todos, isLoading: isLoadingTodos } = useGetTodos();
 
   const [openTask, setOpenTask] = useState("");
+
+  const { mutate: createTodo } = useCreateTodo();
+
+  if (isLoadingTodos) return <>Loading...</>;
 
   return (
     <>
       <ul>
-        {tasks.map((t, i) => (
+        {todos.map(({ _id, title }, i) => (
           <Task
-            key={i}
-            title={t}
-            open={t === openTask}
+            key={_id}
+            title={title}
+            open={title === openTask}
             onOpen={(title) => {
               setOpenTask(title);
             }}
@@ -30,8 +33,13 @@ export const TaskList = () => {
         {openTask === "adding" && (
           <Task
             open={openTask === "adding"}
-            onSave={(t) => {
-              setTasks([...tasks, t]);
+            onSave={(newTask) => {
+              createTodo(newTask, {
+                onSuccess: () => {
+                  queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+                },
+              });
+              setOpenTask("");
             }}
           />
         )}

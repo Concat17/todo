@@ -49,7 +49,13 @@ export const Task = ({ title: initTitle, open, onOpen, onSave }) => {
       {open && (
         <>
           <div>
-            <Button onClick={() => onSave(title)}>Save</Button>
+            <Button
+              onClick={() =>
+                onSave({ title, deadline: "2012-04-23T18:25:43.511Z" })
+              }
+            >
+              Save
+            </Button>
           </div>
           <textarea
             name="Text1"

@@ -1,0 +1,4 @@
+export const QUERY_KEYS = {
+  CREATE_TODO: "CREATE_TODO",
+  GET_TODOS: "GET_TODOS",
+};
