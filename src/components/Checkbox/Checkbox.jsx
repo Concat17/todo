@@ -1,12 +1,12 @@
 import "./Checkbox.less";
 
-export const Checkbox = ({ label, value, onChange }) => {
+export const Checkbox = ({ label, checked, onChange }) => {
   return (
     <label>
       <input
         type="checkbox"
         className="checkbox"
-        checked={value}
+        checked={checked}
         onChange={(e) => {
           onChange(e.target.checked);
         }}

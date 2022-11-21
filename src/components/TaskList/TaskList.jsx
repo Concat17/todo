@@ -2,7 +2,13 @@ import { useState } from "react";
 
 import { Task } from "./components";
 import { IconButton, AddIcon } from "../../components";
-import { useCreateTodo, useDeleteTodo, useGetTodos } from "../../hooks";
+import {
+  useCreateTodo,
+  useDeleteTodo,
+  useEditTodo,
+  useGetTodos,
+  useChangeCheckTodo,
+} from "../../hooks";
 import { QUERY_KEYS } from "../../constants";
 import { queryClient } from "../../utils";
 
@@ -17,6 +23,8 @@ export const TaskList = () => {
 
   const { mutate: createTodo } = useCreateTodo();
   const { mutate: deleteTodo } = useDeleteTodo();
+  const { mutate: editTodo } = useEditTodo();
+  const { mutate: changeCheckTodo } = useChangeCheckTodo();
 
   if (isLoadingTodos) return <>Loading...</>;
 
@@ -30,6 +38,22 @@ export const TaskList = () => {
             open={task._id === openTaskId}
             onOpen={(title) => {
               setOpenTaskId(title);
+            }}
+            onCheck={(checkStatus) => {
+              changeCheckTodo(checkStatus, {
+                onSuccess: () => {
+                  queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+                  queryClient.invalidateQueries([QUERY_KEYS.GET_TODOS]);
+                },
+              });
+            }}
+            onSave={(todo) => {
+              editTodo(todo, {
+                onSuccess: () => {
+                  queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+                },
+              });
+              setOpenTaskId("");
             }}
             onDelete={(id) => {
               deleteTodo(

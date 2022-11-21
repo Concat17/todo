@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import classNames from "classnames";
+import dayjs from "dayjs";
 
 import {
   AddFileIcon,
-  CrossIcon,
   Checkbox,
   IconButton,
   Button,
@@ -12,9 +12,14 @@ import {
 
 import "./Task.less";
 
-export const Task = ({ task, open, onOpen, onSave, onDelete }) => {
-  const [done, setDone] = useState(false);
+export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
+  const [done, setDone] = useState(!!task.done);
   const [title, setTitle] = useState(task?.title || "");
+  const [description, setDescription] = useState(task?.description || "");
+  const [deadline, setDeadline] = useState(
+    dayjs(task.deadline).format("YYYY-MM-DD")
+  );
+
   // const [isOpen, setIsOpen] = useState(open); TODO: figure out why doent work
   // const [isEditing, setIsEditing] = useState(true);
   // console.log(open, isEditing);
@@ -22,7 +27,12 @@ export const Task = ({ task, open, onOpen, onSave, onDelete }) => {
   return (
     <li className="task-container">
       <div className="left">
-        <Checkbox checked={done} onChange={setDone} />
+        <Checkbox
+          checked={done}
+          onChange={(c) => {
+            onCheck({ _id: task._id, done: c });
+          }}
+        />
       </div>
 
       {open ? (
@@ -39,8 +49,9 @@ export const Task = ({ task, open, onOpen, onSave, onDelete }) => {
       <div className="right">
         <input
           type="date"
-          defaultValue="2022-07-22"
-          onChange={(e) => console.log(e.target.value)}
+          disabled={!open}
+          value={deadline}
+          onChange={(e) => setDeadline(e.target.value)}
         />
         <OpenButton open={open} onClick={() => onOpen(open ? "" : task._id)} />
       </div>
@@ -50,7 +61,13 @@ export const Task = ({ task, open, onOpen, onSave, onDelete }) => {
           <div>
             <Button
               onClick={() =>
-                onSave({ title, deadline: "2012-04-23T18:25:43.511Z" })
+                onSave({
+                  _id: task._id,
+                  done,
+                  title,
+                  description,
+                  deadline: dayjs(deadline).toISOString(),
+                })
               }
             >
               Save
@@ -60,7 +77,8 @@ export const Task = ({ task, open, onOpen, onSave, onDelete }) => {
             name="Text1"
             cols="30"
             rows="3"
-            defaultValue={title}
+            value={description}
+            onChange={(e) => setDescription(e.currentTarget.value)}
             placeholder={"Enter task title"}
             className="editable-field"
           ></textarea>
