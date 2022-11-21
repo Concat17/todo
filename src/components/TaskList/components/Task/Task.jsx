@@ -12,9 +12,9 @@ import {
 
 import "./Task.less";
 
-export const Task = ({ title: initTitle, open, onOpen, onSave }) => {
+export const Task = ({ task, open, onOpen, onSave, onDelete }) => {
   const [done, setDone] = useState(false);
-  const [title, setTitle] = useState(initTitle ?? "");
+  const [title, setTitle] = useState(task?.title || "");
   // const [isOpen, setIsOpen] = useState(open); TODO: figure out why doent work
   // const [isEditing, setIsEditing] = useState(true);
   // console.log(open, isEditing);
@@ -42,8 +42,7 @@ export const Task = ({ title: initTitle, open, onOpen, onSave }) => {
           defaultValue="2022-07-22"
           onChange={(e) => console.log(e.target.value)}
         />
-        <OpenButton open={open} onClick={() => onOpen(open ? "" : title)} />
-        {/* <IconButton Icon={CrossIcon} /> */}
+        <OpenButton open={open} onClick={() => onOpen(open ? "" : task._id)} />
       </div>
 
       {open && (
@@ -68,7 +67,7 @@ export const Task = ({ title: initTitle, open, onOpen, onSave }) => {
           <div className="right">
             <div className="right-controls">
               <IconButton Icon={AddFileIcon} />
-              <Button>Remove</Button>
+              <Button onClick={() => onDelete(task._id)}>Remove</Button>
             </div>
           </div>
         </>

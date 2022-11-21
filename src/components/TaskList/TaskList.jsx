@@ -2,50 +2,67 @@ import { useState } from "react";
 
 import { Task } from "./components";
 import { IconButton, AddIcon } from "../../components";
-import { useCreateTodo, useGetTodos } from "../../hooks";
+import { useCreateTodo, useDeleteTodo, useGetTodos } from "../../hooks";
 import { QUERY_KEYS } from "../../constants";
 import { queryClient } from "../../utils";
 
 import "./TaskList.less";
 
+const addingTaskId = "adding";
+
 export const TaskList = () => {
   const { data: todos, isLoading: isLoadingTodos } = useGetTodos();
 
-  const [openTask, setOpenTask] = useState("");
+  const [openTaskId, setOpenTaskId] = useState("");
 
   const { mutate: createTodo } = useCreateTodo();
+  const { mutate: deleteTodo } = useDeleteTodo();
 
   if (isLoadingTodos) return <>Loading...</>;
 
   return (
     <>
       <ul>
-        {todos.map(({ _id, title }, i) => (
+        {todos.map((task) => (
           <Task
-            key={_id}
-            title={title}
-            open={title === openTask}
+            key={task._id}
+            task={task}
+            open={task._id === openTaskId}
             onOpen={(title) => {
-              setOpenTask(title);
+              setOpenTaskId(title);
+            }}
+            onDelete={(id) => {
+              deleteTodo(
+                { id },
+                {
+                  onSuccess: () => {
+                    queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+                  },
+                }
+              );
+              setOpenTaskId("");
             }}
           />
         ))}
-        {openTask === "adding" && (
+        {openTaskId === addingTaskId && (
           <Task
-            open={openTask === "adding"}
+            open={openTaskId === addingTaskId}
             onSave={(newTask) => {
               createTodo(newTask, {
                 onSuccess: () => {
                   queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
                 },
               });
-              setOpenTask("");
+              setOpenTaskId("");
             }}
           />
         )}
       </ul>
-      {!(openTask === "adding") && (
-        <IconButton Icon={AddIcon} onClick={() => setOpenTask("adding")} />
+      {!(openTaskId === addingTaskId) && (
+        <IconButton
+          Icon={AddIcon}
+          onClick={() => setOpenTaskId(addingTaskId)}
+        />
       )}
     </>
   );
