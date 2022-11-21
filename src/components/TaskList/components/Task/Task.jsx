@@ -12,17 +12,20 @@ import {
 
 import "./Task.less";
 
+const SAVE_BUTTON_TEXT = "Save";
+const REMOVE_BUTTON_TEXT = "Remove";
+const TITLE_PLACEHOLDER = "Enter task title";
+const DESCRIPTION_PLACEHOLDER = "Enter task description";
+
+const deadlineDateFormat = "YYYY-MM-DD";
+
 export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
-  const [done, setDone] = useState(!!task.done);
+  const [done, setDone] = useState(!!task?.done);
   const [title, setTitle] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
   const [deadline, setDeadline] = useState(
-    dayjs(task.deadline).format("YYYY-MM-DD")
+    task?.deadline ? dayjs(task.deadline).format(deadlineDateFormat) : undefined
   );
-
-  // const [isOpen, setIsOpen] = useState(open); TODO: figure out why doent work
-  // const [isEditing, setIsEditing] = useState(true);
-  // console.log(open, isEditing);
 
   return (
     <li className="task-container">
@@ -41,7 +44,7 @@ export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.currentTarget.value)}
-          placeholder={"Enter task title"}
+          placeholder={TITLE_PLACEHOLDER}
           className="editable-field"
         />
       ) : (
@@ -63,7 +66,7 @@ export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
             <Button
               onClick={() =>
                 onSave({
-                  _id: task._id,
+                  _id: task?._id,
                   done,
                   title,
                   description,
@@ -71,7 +74,7 @@ export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
                 })
               }
             >
-              Save
+              {SAVE_BUTTON_TEXT}
             </Button>
           </div>
           <textarea
@@ -80,13 +83,15 @@ export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
             rows="3"
             value={description}
             onChange={(e) => setDescription(e.currentTarget.value)}
-            placeholder={"Enter task title"}
+            placeholder={DESCRIPTION_PLACEHOLDER}
             className="editable-field"
           ></textarea>
           <div className="right">
             <div className="right-controls">
               <IconButton Icon={AddFileIcon} />
-              <Button onClick={() => onDelete(task._id)}>Remove</Button>
+              <Button onClick={() => onDelete(task._id)}>
+                {REMOVE_BUTTON_TEXT}
+              </Button>
             </div>
           </div>
         </>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 import { Task } from "./components";
 import { IconButton, AddIcon } from "../../components";
@@ -15,6 +15,7 @@ import { queryClient } from "../../utils";
 import "./TaskList.less";
 
 const addingTaskId = "adding";
+const LOADING = "Loading...";
 
 export const TaskList = () => {
   const { data: todos, isLoading: isLoadingTodos } = useGetTodos();
@@ -26,7 +27,58 @@ export const TaskList = () => {
   const { mutate: editTodo } = useEditTodo();
   const { mutate: changeCheckTodo } = useChangeCheckTodo();
 
-  if (isLoadingTodos) return <>Loading...</>;
+  const handleCreateTodo = useCallback(
+    (newTask) => {
+      createTodo(newTask, {
+        onSuccess: () => {
+          queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+        },
+      });
+      setOpenTaskId("");
+    },
+    [createTodo]
+  );
+
+  const handleChangeCheckTodo = useCallback(
+    (checkStatus) => {
+      changeCheckTodo(checkStatus, {
+        onSuccess: () => {
+          queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+          queryClient.invalidateQueries([QUERY_KEYS.GET_TODOS]);
+        },
+      });
+    },
+    [changeCheckTodo]
+  );
+
+  const handleEditTodo = useCallback(
+    (todo) => {
+      editTodo(todo, {
+        onSuccess: () => {
+          queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+        },
+      });
+      setOpenTaskId("");
+    },
+    [editTodo]
+  );
+
+  const handleDeleteTodo = useCallback(
+    (_id) => {
+      deleteTodo(
+        { _id },
+        {
+          onSuccess: () => {
+            queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+          },
+        }
+      );
+      setOpenTaskId("");
+    },
+    [deleteTodo]
+  );
+
+  if (isLoadingTodos) return <>{LOADING}</>;
 
   return (
     <>
@@ -39,47 +91,13 @@ export const TaskList = () => {
             onOpen={(title) => {
               setOpenTaskId(title);
             }}
-            onCheck={(checkStatus) => {
-              changeCheckTodo(checkStatus, {
-                onSuccess: () => {
-                  queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
-                  queryClient.invalidateQueries([QUERY_KEYS.GET_TODOS]);
-                },
-              });
-            }}
-            onSave={(todo) => {
-              editTodo(todo, {
-                onSuccess: () => {
-                  queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
-                },
-              });
-              setOpenTaskId("");
-            }}
-            onDelete={(id) => {
-              deleteTodo(
-                { id },
-                {
-                  onSuccess: () => {
-                    queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
-                  },
-                }
-              );
-              setOpenTaskId("");
-            }}
+            onCheck={handleChangeCheckTodo}
+            onSave={handleEditTodo}
+            onDelete={handleDeleteTodo}
           />
         ))}
         {openTaskId === addingTaskId && (
-          <Task
-            open={openTaskId === addingTaskId}
-            onSave={(newTask) => {
-              createTodo(newTask, {
-                onSuccess: () => {
-                  queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
-                },
-              });
-              setOpenTaskId("");
-            }}
-          />
+          <Task open={openTaskId === addingTaskId} onSave={handleCreateTodo} />
         )}
       </ul>
       {!(openTaskId === addingTaskId) && (
