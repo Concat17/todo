@@ -28,7 +28,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
       onCheck({ _id: todo._id, done: done });
       setDone(done);
     },
-    [onCheck, todo._id]
+    [onCheck, todo?._id]
   );
 
   const handleSave = useCallback(() => {
