@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState } from "react";
 import classNames from "classnames";
 import dayjs from "dayjs";
 
@@ -31,6 +31,7 @@ export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
           checked={done}
           onChange={(c) => {
             onCheck({ _id: task._id, done: c });
+            setDone(c);
           }}
         />
       </div>
