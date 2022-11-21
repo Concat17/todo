@@ -7,6 +7,6 @@ export const useEditTodo = () =>
     mutationKey: [QUERY_KEYS.EDIT_TODO],
     mutationFn: (todo) => {
       console.log(todo);
-      return axios.put("http://localhost:3333/todo", todo);
+      return axios.put(`${import.meta.env.VITE_API_URL}/todo`, todo);
     },
   });

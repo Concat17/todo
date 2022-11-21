@@ -6,6 +6,6 @@ export const useCreateTodo = () =>
   useMutation({
     mutationKey: [QUERY_KEYS.CREATE_TODO],
     mutationFn: (newTodo) => {
-      return axios.post("http://localhost:3333/todo", newTodo);
+      return axios.post(`${import.meta.env.VITE_API_URL}/todo`, newTodo);
     },
   });

@@ -4,5 +4,5 @@ import axios from "axios";
 
 export const useGetTodos = () =>
   useQuery([QUERY_KEYS.GET_TODOS], () =>
-    axios.get("http://localhost:3333/todo").then((res) => res.data)
+    axios.get(`${import.meta.env.VITE_API_URL}/todo`).then((res) => res.data)
   );
