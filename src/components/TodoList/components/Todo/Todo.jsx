@@ -10,6 +10,7 @@ const SAVE_BUTTON_TEXT = "Save";
 const REMOVE_BUTTON_TEXT = "Remove";
 const TITLE_PLACEHOLDER = "Enter todo title";
 const DESCRIPTION_PLACEHOLDER = "Enter todo description";
+const NO_TITLE_ERROR_TEXT = "Enter todo title";
 
 const deadlineDateFormat = "YYYY-MM-DD";
 
@@ -20,6 +21,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
   const [deadline, setDeadline] = useState(
     todo?.deadline ? dayjs(todo.deadline).format(deadlineDateFormat) : undefined
   );
+  const [isNoTitleError, setIsNoTitleError] = useState(false);
 
   const handleCheck = useCallback(
     (done) => {
@@ -29,17 +31,21 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
     [onCheck, todo._id]
   );
 
-  const handleSave = useCallback(
-    () =>
+  const handleSave = useCallback(() => {
+    if (!title) {
+      setIsNoTitleError(true);
+    } else {
       onSave({
         _id: todo?._id,
         done,
         title,
         description,
         deadline: dayjs(deadline).toISOString(),
-      }),
-    [deadline, description, done, onSave, title, todo?._id]
-  );
+      });
+
+      setIsNoTitleError(false);
+    }
+  }, [deadline, description, done, onSave, title, todo?._id]);
 
   return (
     <li className="todo-container">
@@ -51,7 +57,9 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
         <input
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.currentTarget.value)}
+          onChange={(e) => {
+            setTitle(e.currentTarget.value), setIsNoTitleError(false);
+          }}
           placeholder={TITLE_PLACEHOLDER}
           className="editable-title"
         />
@@ -71,7 +79,12 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
       {open && (
         <>
           <div className="left">
-            <Button onClick={handleSave}>{SAVE_BUTTON_TEXT}</Button>
+            <div className="left-controls">
+              <Button onClick={handleSave}>{SAVE_BUTTON_TEXT}</Button>
+              {isNoTitleError && (
+                <span className="error">{NO_TITLE_ERROR_TEXT}</span>
+              )}
+            </div>
           </div>
           <textarea
             name="description"
