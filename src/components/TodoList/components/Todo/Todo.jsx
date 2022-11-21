@@ -8,32 +8,32 @@ import {
   IconButton,
   Button,
   OpenButton,
-} from "../../../../components";
+} from "../../..";
 
-import "./Task.less";
+import "./Todo.less";
 
 const SAVE_BUTTON_TEXT = "Save";
 const REMOVE_BUTTON_TEXT = "Remove";
-const TITLE_PLACEHOLDER = "Enter task title";
-const DESCRIPTION_PLACEHOLDER = "Enter task description";
+const TITLE_PLACEHOLDER = "Enter todo title";
+const DESCRIPTION_PLACEHOLDER = "Enter todo description";
 
 const deadlineDateFormat = "YYYY-MM-DD";
 
-export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
-  const [done, setDone] = useState(!!task?.done);
-  const [title, setTitle] = useState(task?.title || "");
-  const [description, setDescription] = useState(task?.description || "");
+export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
+  const [done, setDone] = useState(!!todo?.done);
+  const [title, setTitle] = useState(todo?.title || "");
+  const [description, setDescription] = useState(todo?.description || "");
   const [deadline, setDeadline] = useState(
-    task?.deadline ? dayjs(task.deadline).format(deadlineDateFormat) : undefined
+    todo?.deadline ? dayjs(todo.deadline).format(deadlineDateFormat) : undefined
   );
 
   return (
-    <li className="task-container">
+    <li className="todo-container">
       <div className="left">
         <Checkbox
           checked={done}
           onChange={(c) => {
-            onCheck({ _id: task._id, done: c });
+            onCheck({ _id: todo._id, done: c });
             setDone(c);
           }}
         />
@@ -57,7 +57,7 @@ export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
         />
-        <OpenButton open={open} onClick={() => onOpen(open ? "" : task._id)} />
+        <OpenButton open={open} onClick={() => onOpen(open ? "" : todo._id)} />
       </div>
 
       {open && (
@@ -66,7 +66,7 @@ export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
             <Button
               onClick={() =>
                 onSave({
-                  _id: task?._id,
+                  _id: todo?._id,
                   done,
                   title,
                   description,
@@ -89,7 +89,7 @@ export const Task = ({ task, open, onCheck, onOpen, onSave, onDelete }) => {
           <div className="right">
             <div className="right-controls">
               <IconButton Icon={AddFileIcon} />
-              <Button onClick={() => onDelete(task._id)}>
+              <Button onClick={() => onDelete(todo._id)}>
                 {REMOVE_BUTTON_TEXT}
               </Button>
             </div>

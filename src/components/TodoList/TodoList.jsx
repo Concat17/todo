@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 
-import { Task } from "./components";
-import { IconButton, AddIcon } from "../../components";
+import { Todo } from "./components";
+import { IconButton, AddIcon } from "..";
 import {
   useCreateTodo,
   useDeleteTodo,
@@ -12,15 +12,15 @@ import {
 import { QUERY_KEYS } from "../../constants";
 import { queryClient } from "../../utils";
 
-import "./TaskList.less";
+import "./TodoList.less";
 
-const addingTaskId = "adding";
+const addingTodoId = "adding";
 const LOADING = "Loading...";
 
-export const TaskList = () => {
+export const TodoList = () => {
   const { data: todos, isLoading: isLoadingTodos } = useGetTodos();
 
-  const [openTaskId, setOpenTaskId] = useState("");
+  const [openTodoId, setOpenTodoId] = useState("");
 
   const { mutate: createTodo } = useCreateTodo();
   const { mutate: deleteTodo } = useDeleteTodo();
@@ -28,13 +28,13 @@ export const TaskList = () => {
   const { mutate: changeCheckTodo } = useChangeCheckTodo();
 
   const handleCreateTodo = useCallback(
-    (newTask) => {
-      createTodo(newTask, {
+    (newTodo) => {
+      createTodo(newTodo, {
         onSuccess: () => {
           queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
         },
       });
-      setOpenTaskId("");
+      setOpenTodoId("");
     },
     [createTodo]
   );
@@ -58,7 +58,7 @@ export const TaskList = () => {
           queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
         },
       });
-      setOpenTaskId("");
+      setOpenTodoId("");
     },
     [editTodo]
   );
@@ -73,7 +73,7 @@ export const TaskList = () => {
           },
         }
       );
-      setOpenTaskId("");
+      setOpenTodoId("");
     },
     [deleteTodo]
   );
@@ -83,27 +83,27 @@ export const TaskList = () => {
   return (
     <>
       <ul>
-        {todos.map((task) => (
-          <Task
-            key={task._id}
-            task={task}
-            open={task._id === openTaskId}
+        {todos.map((todo) => (
+          <Todo
+            key={todo._id}
+            todo={todo}
+            open={todo._id === openTodoId}
             onOpen={(title) => {
-              setOpenTaskId(title);
+              setOpenTodoId(title);
             }}
             onCheck={handleChangeCheckTodo}
             onSave={handleEditTodo}
             onDelete={handleDeleteTodo}
           />
         ))}
-        {openTaskId === addingTaskId && (
-          <Task open={openTaskId === addingTaskId} onSave={handleCreateTodo} />
+        {openTodoId === addingTodoId && (
+          <Todo open={openTodoId === addingTodoId} onSave={handleCreateTodo} />
         )}
       </ul>
-      {!(openTaskId === addingTaskId) && (
+      {!(openTodoId === addingTodoId) && (
         <IconButton
           Icon={AddIcon}
-          onClick={() => setOpenTaskId(addingTaskId)}
+          onClick={() => setOpenTodoId(addingTodoId)}
         />
       )}
     </>

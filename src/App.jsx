@@ -1,6 +1,6 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 
-import { TaskList } from "./components";
+import { TodoList } from "./components";
 import { queryClient } from "./utils";
 
 import "./App.less";
@@ -13,7 +13,7 @@ function App() {
       <div className="App">
         <h1>{TITLE}</h1>
 
-        <TaskList />
+        <TodoList />
       </div>
     </QueryClientProvider>
   );
