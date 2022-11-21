@@ -2,13 +2,7 @@ import { useState } from "react";
 import classNames from "classnames";
 import dayjs from "dayjs";
 
-import {
-  AddFileIcon,
-  Checkbox,
-  IconButton,
-  Button,
-  OpenButton,
-} from "../../..";
+import { Checkbox, Button, OpenButton } from "../../..";
 
 import "./Todo.less";
 
@@ -45,7 +39,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
           value={title}
           onChange={(e) => setTitle(e.currentTarget.value)}
           placeholder={TITLE_PLACEHOLDER}
-          className="editable-field"
+          className="editable-title"
         />
       ) : (
         <span className={classNames("title", { strike: done })}>{title}</span>
@@ -62,7 +56,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
 
       {open && (
         <>
-          <div>
+          <div className="left">
             <Button
               onClick={() =>
                 onSave({
@@ -78,17 +72,17 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
             </Button>
           </div>
           <textarea
-            name="Text1"
+            name="description"
             cols="30"
-            rows="3"
+            rows="4"
             value={description}
             onChange={(e) => setDescription(e.currentTarget.value)}
             placeholder={DESCRIPTION_PLACEHOLDER}
-            className="editable-field"
+            className="editable-description"
           ></textarea>
           <div className="right">
             <div className="right-controls">
-              <IconButton Icon={AddFileIcon} />
+              {/* <IconButton Icon={AddFileIcon} /> */}
               <Button onClick={() => onDelete(todo._id)}>
                 {REMOVE_BUTTON_TEXT}
               </Button>

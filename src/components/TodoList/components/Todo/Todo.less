@@ -1,9 +1,12 @@
-@border-color: #7d7d7d;
+@separator-color: #7d7d7d;
+@input-border: #7d7d7d;
+@input-border-focus: white;
+@title-height: 2rem;
 
 .todo-container {
   padding: 1em 0.5em 0.5em;
 
-  border-bottom: solid @border-color 1px;
+  border-bottom: solid @separator-color 1px;
 
   font-size: 2rem;
 
@@ -13,17 +16,20 @@
 
   .left {
     display: flex;
+
+    align-items: center;
   }
 
   .title {
     flex-grow: 1;
 
-    // cursor: pointer;
+    height: @title-height;
   }
 
   .right {
     display: flex;
     justify-content: end;
+    align-items: center;
     gap: 0.5em;
   }
 
@@ -33,10 +39,32 @@
     justify-content: space-between;
   }
 
-  .editable-field {
+  .editable-title {
+    text-align: center;
+    height: 2rem;
+
+    border: 0;
+    border-bottom: solid @input-border 1px;
+
+    color: inherit;
+    background-color: inherit;
+
+    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 2rem;
+
+    &:focus {
+      outline: none;
+      border: 0;
+      border-bottom: solid @input-border-focus 1px;
+    }
+  }
+
+  .editable-description {
+    resize: none;
+
     text-align: center;
 
-    border: solid white 1px;
+    border: solid @input-border 1px;
     border-radius: 8px;
 
     color: inherit;
