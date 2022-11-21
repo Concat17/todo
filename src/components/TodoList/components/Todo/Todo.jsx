@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import classNames from "classnames";
 import dayjs from "dayjs";
 
@@ -21,16 +21,30 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
     todo?.deadline ? dayjs(todo.deadline).format(deadlineDateFormat) : undefined
   );
 
+  const handleCheck = useCallback(
+    (done) => {
+      onCheck({ _id: todo._id, done: done });
+      setDone(done);
+    },
+    [onCheck, todo._id]
+  );
+
+  const handleSave = useCallback(
+    () =>
+      onSave({
+        _id: todo?._id,
+        done,
+        title,
+        description,
+        deadline: dayjs(deadline).toISOString(),
+      }),
+    [deadline, description, done, onSave, title, todo?._id]
+  );
+
   return (
     <li className="todo-container">
       <div className="left">
-        <Checkbox
-          checked={done}
-          onChange={(c) => {
-            onCheck({ _id: todo._id, done: c });
-            setDone(c);
-          }}
-        />
+        <Checkbox checked={done} onChange={handleCheck} />
       </div>
 
       {open ? (
@@ -57,19 +71,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
       {open && (
         <>
           <div className="left">
-            <Button
-              onClick={() =>
-                onSave({
-                  _id: todo?._id,
-                  done,
-                  title,
-                  description,
-                  deadline: dayjs(deadline).toISOString(),
-                })
-              }
-            >
-              {SAVE_BUTTON_TEXT}
-            </Button>
+            <Button onClick={handleSave}>{SAVE_BUTTON_TEXT}</Button>
           </div>
           <textarea
             name="description"
