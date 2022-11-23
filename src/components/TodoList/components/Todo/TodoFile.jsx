@@ -1,34 +1,66 @@
 import { useState, useCallback } from "react";
 
-import { Button } from "../../../Button";
-
 import {
   useUploadTodoAttachment,
   useGetTodoAttachment,
+  useDeleteTodoAttachment,
 } from "../../../../hooks";
 
+import { queryClient } from "../../../../utils";
+import { QUERY_KEYS } from "../../../../constants";
+
+import "./TodoFile.less";
+import { IconButton } from "../../../IconButton";
+import { CrossIcon } from "../../../Icons";
+
 export const TodoFile = ({ todo }) => {
-  const [localFile, setFile] = useState();
+  const [file, setFile] = useState();
 
   const { mutate: uploadAttachment } = useUploadTodoAttachment();
-  const { refetch } = useGetTodoAttachment({
+  const { mutate: deleteAttachment } = useDeleteTodoAttachment();
+  const { refetch: downloadFile } = useGetTodoAttachment({
     todoId: todo._id,
     fileName: todo.fileName,
   });
 
-  const handleSubmit = useCallback(
+  const handleUploadAttachment = useCallback(
     (event) => {
       event.preventDefault();
-      console.log(todo, todo._id);
-      uploadAttachment({ file: localFile, todoId: todo._id });
+      uploadAttachment(
+        { file, todoId: todo._id },
+        {
+          onSuccess: () => {
+            queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+          },
+        }
+      );
     },
-    [localFile, todo, uploadAttachment]
+    [file, todo, uploadAttachment]
+  );
+
+  const handleDeleteAttachment = useCallback(
+    (todoId) => {
+      deleteAttachment(todoId, {
+        onSuccess: () => {
+          queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+        },
+      });
+    },
+    [deleteAttachment]
   );
 
   return todo.fileId ? (
-    <Button onClick={() => refetch()}>{todo.fileName}</Button>
+    <div className="file-container">
+      <a onClick={() => downloadFile()} className="file-download-link ">
+        {todo.fileName}
+      </a>
+      <IconButton
+        Icon={CrossIcon}
+        onClick={() => handleDeleteAttachment(todo._id)}
+      />
+    </div>
   ) : (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleUploadAttachment} className="file-upload-form">
       <input type="file" onChange={(event) => setFile(event.target.files[0])} />
       <button type="submit">Upload</button>
     </form>
