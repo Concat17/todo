@@ -1,7 +1,7 @@
-import { useState, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 import { Todo } from "./components";
-import { IconButton, AddIcon } from "..";
+import { IconButton, AddIcon, LoadingSpinner } from "..";
 import {
   useCreateTodo,
   useDeleteTodo,
@@ -15,15 +15,20 @@ import { queryClient } from "../../utils";
 import "./TodoList.less";
 
 const addingTodoId = "adding";
-const LOADING = "Loading...";
+
+const Loading = () => (
+  <div className="loading-container">
+    <LoadingSpinner />
+  </div>
+);
 
 export const TodoList = () => {
   const { data: todos, isLoading: isLoadingTodos } = useGetTodos();
 
   const [openTodoId, setOpenTodoId] = useState("");
 
-  const { mutate: createTodo } = useCreateTodo();
-  const { mutate: deleteTodo } = useDeleteTodo();
+  const { mutate: createTodo, isLoading: isCreating } = useCreateTodo();
+  const { mutate: deleteTodo, isLoading: isDeleting } = useDeleteTodo();
   const { mutate: editTodo } = useEditTodo();
   const { mutate: changeCheckTodo } = useChangeCheckTodo();
 
@@ -44,7 +49,6 @@ export const TodoList = () => {
       changeCheckTodo(checkStatus, {
         onSuccess: () => {
           queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
-          queryClient.invalidateQueries([QUERY_KEYS.GET_TODOS]);
         },
       });
     },
@@ -70,15 +74,21 @@ export const TodoList = () => {
         {
           onSuccess: () => {
             queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+            setOpenTodoId("");
           },
         }
       );
-      setOpenTodoId("");
     },
     [deleteTodo]
   );
 
-  if (isLoadingTodos) return <>{LOADING}</>;
+  const isTodoInfoLoading = useMemo(
+    () => isCreating || isDeleting,
+
+    [isCreating, isDeleting]
+  );
+
+  if (isLoadingTodos) return <Loading />;
 
   return (
     <>
@@ -100,12 +110,13 @@ export const TodoList = () => {
           <Todo open={openTodoId === addingTodoId} onSave={handleCreateTodo} />
         )}
       </ul>
-      {!(openTodoId === addingTodoId) && (
+      {!(openTodoId === addingTodoId) && !isTodoInfoLoading && (
         <IconButton
           Icon={AddIcon}
           onClick={() => setOpenTodoId(addingTodoId)}
         />
       )}
+      {isTodoInfoLoading && <Loading />}
     </>
   );
 };

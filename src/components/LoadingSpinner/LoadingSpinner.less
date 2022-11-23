@@ -1,0 +1,23 @@
+.spinner {
+  width: 2em;
+  height: 2em;
+
+  border: 3px solid rgb(117, 2, 2);
+  border-top: 3px solid red;
+
+  border-radius: 9999px;
+
+  animation-name: rotate;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

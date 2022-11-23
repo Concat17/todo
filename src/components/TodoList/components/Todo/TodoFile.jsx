@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 
 import {
   useUploadTodoAttachment,
@@ -6,18 +6,28 @@ import {
   useDeleteTodoAttachment,
 } from "../../../../hooks";
 
+import { LoadingSpinner } from "../../../LoadingSpinner";
 import { queryClient } from "../../../../utils";
 import { QUERY_KEYS } from "../../../../constants";
 
-import "./TodoFile.less";
 import { IconButton } from "../../../IconButton";
 import { CrossIcon } from "../../../Icons";
+
+import "./TodoFile.less";
+
+const Loading = () => (
+  <div className="loading-container">
+    <LoadingSpinner />
+  </div>
+);
 
 export const TodoFile = ({ todo }) => {
   const [file, setFile] = useState();
 
-  const { mutate: uploadAttachment } = useUploadTodoAttachment();
-  const { mutate: deleteAttachment } = useDeleteTodoAttachment();
+  const { mutate: uploadAttachment, isLoading: isUploading } =
+    useUploadTodoAttachment();
+  const { mutate: deleteAttachment, isLoading: isDeleting } =
+    useDeleteTodoAttachment();
   const { refetch: downloadFile } = useGetTodoAttachment({
     todoId: todo._id,
     fileName: todo.fileName,
@@ -48,6 +58,16 @@ export const TodoFile = ({ todo }) => {
     },
     [deleteAttachment]
   );
+
+  const isFileLoading = useMemo(
+    () => isUploading || isDeleting,
+
+    [isUploading, isDeleting]
+  );
+
+  if (isFileLoading) {
+    return <Loading />;
+  }
 
   return todo.fileId ? (
     <div className="file-container">
