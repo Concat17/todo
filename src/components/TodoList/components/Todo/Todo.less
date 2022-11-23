@@ -2,7 +2,7 @@
 @separator-color: #7d7d7d;
 @input-border: #7d7d7d;
 @input-border-focus: white;
-@title-height: 2rem;
+@title-height: 2.5rem;
 
 .todo-container {
   padding: 1em 0.5em 0.5em;
@@ -33,6 +33,10 @@
     height: @title-height;
   }
 
+  .date-picker {
+    cursor: pointer;
+  }
+
   .right {
     display: flex;
     justify-content: end;
@@ -48,6 +52,8 @@
 
   .editable-title {
     text-align: center;
+
+    height: @title-height;
 
     border: 0;
     border-bottom: solid @input-border 1px;

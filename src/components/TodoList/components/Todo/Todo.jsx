@@ -80,7 +80,10 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
       )}
       <div className="right">
         <input
-          className={classNames({ expire: isDeadlineExpire })}
+          className={classNames({
+            expire: isDeadlineExpire,
+            "date-picker": open,
+          })}
           type="date"
           disabled={!open}
           value={deadline}
