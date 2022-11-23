@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import classNames from "classnames";
 import dayjs from "dayjs";
 
@@ -20,7 +20,9 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
   const [title, setTitle] = useState(todo?.title || "");
   const [description, setDescription] = useState(todo?.description || "");
   const [deadline, setDeadline] = useState(
-    todo?.deadline ? dayjs(todo.deadline).format(deadlineDateFormat) : undefined
+    dayjs(todo?.deadline ? todo?.deadline : undefined).format(
+      deadlineDateFormat
+    )
   );
   const [isNoTitleError, setIsNoTitleError] = useState(false);
 
@@ -48,6 +50,13 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
     }
   }, [deadline, description, done, onSave, title, todo?._id]);
 
+  const isDeadlineExpire = useMemo(() => {
+    const today = dayjs();
+    const deadlineDate = dayjs(deadline).add(1, "day");
+
+    return deadlineDate.isBefore(today);
+  }, [deadline]);
+
   return (
     <li className="todo-container">
       <div className="left">
@@ -69,9 +78,13 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
       )}
       <div className="right">
         <input
+          className={classNames({ expire: isDeadlineExpire })}
           type="date"
           disabled={!open}
           value={deadline}
+          min="1997-01-01"
+          max="2030-12-31"
+          placeholder="dd-mm-yyyy"
           onChange={(e) => setDeadline(e.target.value)}
         />
         <OpenButton open={open} onClick={() => onOpen(open ? "" : todo._id)} />
