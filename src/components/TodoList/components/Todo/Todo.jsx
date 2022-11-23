@@ -60,7 +60,9 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
   return (
     <li className="todo-container">
       <div className="left">
-        <Checkbox checked={done} onChange={handleCheck} />
+        {todo?._id && (
+          <Checkbox disabled={true} checked={done} onChange={handleCheck} />
+        )}
       </div>
 
       {open ? (
@@ -87,7 +89,12 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
           placeholder="dd-mm-yyyy"
           onChange={(e) => setDeadline(e.target.value)}
         />
-        <OpenButton open={open} onClick={() => onOpen(open ? "" : todo._id)} />
+        <OpenButton
+          open={open}
+          onClick={() => {
+            onOpen(open ? "" : todo._id);
+          }}
+        />
       </div>
 
       {open && (

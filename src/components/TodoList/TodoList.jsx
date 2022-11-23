@@ -107,7 +107,13 @@ export const TodoList = () => {
           />
         ))}
         {openTodoId === addingTodoId && (
-          <Todo open={openTodoId === addingTodoId} onSave={handleCreateTodo} />
+          <Todo
+            open={openTodoId === addingTodoId}
+            onSave={handleCreateTodo}
+            onOpen={() => {
+              setOpenTodoId("");
+            }}
+          />
         )}
       </ul>
       {!(openTodoId === addingTodoId) && !isTodoInfoLoading && (
