@@ -3,6 +3,7 @@ import classNames from "classnames";
 import dayjs from "dayjs";
 
 import { Checkbox, Button, OpenButton } from "../../..";
+import { TodoFile } from "./TodoFile";
 
 import "./Todo.less";
 
@@ -81,6 +82,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
           <div className="left">
             <div className="left-controls">
               <Button onClick={handleSave}>{SAVE_BUTTON_TEXT}</Button>
+
               {isNoTitleError && (
                 <span className="error">{NO_TITLE_ERROR_TEXT}</span>
               )}
@@ -97,7 +99,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
           ></textarea>
           <div className="right">
             <div className="right-controls">
-              {/* <IconButton Icon={AddFileIcon} /> */}
+              {todo?._id && <TodoFile todo={todo} />}
               <Button onClick={() => onDelete(todo._id)}>
                 {REMOVE_BUTTON_TEXT}
               </Button>
