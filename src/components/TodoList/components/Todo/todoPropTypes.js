@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import dayjs from "dayjs";
 
 export const TodoPropTypes = {
   /**
@@ -30,7 +31,7 @@ export const TodoPropTypes = {
     /**
      * Todo deadline
      */
-    // deadline: PropTypes.instanceOf(dayjs.Dayjs),
+    deadline: PropTypes.instanceOf(dayjs.Dayjs),
     /**
      * File id
      */
