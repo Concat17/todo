@@ -6,7 +6,6 @@ export const useDeleteTodo = () =>
   useMutation({
     mutationKey: [QUERY_KEYS.DELETE_TODO],
     mutationFn: (todo) => {
-      console.log("t", todo);
       return axios.delete(`${import.meta.env.VITE_API_URL}/todo`, {
         data: todo,
       });

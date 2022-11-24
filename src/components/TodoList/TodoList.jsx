@@ -16,15 +16,31 @@ import "./TodoList.less";
 
 const addingTodoId = "adding";
 
+/**
+ * Container for centering loading spin
+ *
+ * @component
+ */
 const Loading = () => (
   <div className="loading-container">
     <LoadingSpinner />
   </div>
 );
 
+/**
+ * Component for showing list of todo.
+ *
+ * @component
+ * @example
+ * return (
+ *    <TodoList />
+ * )
+ *
+ */
 export const TodoList = () => {
   const { data: todos, isLoading: isLoadingTodos } = useGetTodos();
 
+  // Only one todo can be opened in the same moment. This state provides such behaviour;
   const [openTodoId, setOpenTodoId] = useState("");
 
   const { mutate: createTodo, isLoading: isCreating } = useCreateTodo();
@@ -32,14 +48,15 @@ export const TodoList = () => {
   const { mutate: editTodo } = useEditTodo();
   const { mutate: changeCheckTodo } = useChangeCheckTodo();
 
+  // setOpenTodoId("") in next functions closes todo after successful action
   const handleCreateTodo = useCallback(
     (newTodo) => {
       createTodo(newTodo, {
         onSuccess: () => {
           queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+          setOpenTodoId("");
         },
       });
-      setOpenTodoId("");
     },
     [createTodo]
   );
@@ -60,9 +77,9 @@ export const TodoList = () => {
       editTodo(todo, {
         onSuccess: () => {
           queryClient.refetchQueries([QUERY_KEYS.GET_TODOS]);
+          setOpenTodoId("");
         },
       });
-      setOpenTodoId("");
     },
     [editTodo]
   );
@@ -82,6 +99,7 @@ export const TodoList = () => {
     [deleteTodo]
   );
 
+  // checks if any request is loading
   const isTodoInfoLoading = useMemo(
     () => isCreating || isDeleting,
 
@@ -101,11 +119,12 @@ export const TodoList = () => {
             onOpen={(title) => {
               setOpenTodoId(title);
             }}
-            onCheck={handleChangeCheckTodo}
+            toggleDone={handleChangeCheckTodo}
             onSave={handleEditTodo}
             onDelete={handleDeleteTodo}
           />
         ))}
+        {/* opens create todo form */}
         {openTodoId === addingTodoId && (
           <Todo
             open={openTodoId === addingTodoId}
@@ -116,6 +135,7 @@ export const TodoList = () => {
           />
         )}
       </ul>
+      {/* showing add todo button if there is no create todo form and nothing is loading */}
       {!(openTodoId === addingTodoId) && !isTodoInfoLoading && (
         <IconButton
           Icon={AddIcon}

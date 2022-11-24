@@ -1,7 +1,15 @@
 import classNames from "classnames";
+import PropTypes from "prop-types";
 
 import "./OpenButton.less";
 
+/**
+ * Button with open icon.
+ *
+ * @component
+ * @example
+ *  <OpenButton open={open} onClick={handleOpen}/>
+ */
 export const OpenButton = ({ open, onClick }) => {
   return (
     <div className="container" onClick={onClick}>
@@ -21,4 +29,8 @@ export const OpenButton = ({ open, onClick }) => {
       </svg>
     </div>
   );
+};
+OpenButton.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClick: PropTypes.func,
 };

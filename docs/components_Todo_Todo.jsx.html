@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Todo/Todo.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Todo/Todo.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useState, useCallback, useMemo } from "react";
+import classNames from "classnames";
+import dayjs from "dayjs";
+
+import { Checkbox, Button, OpenButton } from "../../..";
+import { TodoAttachment } from "./components/TodoAttachment";
+
+import { TodoPropTypes } from "./todoPropTypes";
+
+import "./Todo.less";
+
+const SAVE_BUTTON_TEXT = "Save";
+const REMOVE_BUTTON_TEXT = "Remove";
+const TITLE_PLACEHOLDER = "Enter todo title";
+const DESCRIPTION_PLACEHOLDER = "Enter todo description";
+const NO_TITLE_ERROR_TEXT = "Enter todo title";
+
+const deadlineDateFormat = "YYYY-MM-DD";
+
+/**
+ * Component for showing todo.
+ *
+ * @component
+ * @example
+ * const todo = {
+ *   _id: "637e4e024535a372b431538e",
+ *   done: false,
+ *   title: "to do homework",
+ * }
+ * const open = false;
+ * return (
+ *    &lt;Todo todo={todo}  open={open} />
+ * )
+ *
+ */
+export const Todo = ({ todo, open, toggleDone, onOpen, onSave, onDelete }) => {
+  const [done, setDone] = useState(!!todo?.done);
+  const [title, setTitle] = useState(todo?.title || "");
+  const [description, setDescription] = useState(todo?.description || "");
+  const [deadline, setDeadline] = useState(
+    dayjs(todo?.deadline ? todo?.deadline : undefined).format(
+      deadlineDateFormat
+    )
+  );
+  const [isNoTitleError, setIsNoTitleError] = useState(false);
+
+  const handleCheck = useCallback(
+    (done) => {
+      toggleDone({ _id: todo._id, done: done });
+      setDone(done);
+    },
+    [toggleDone, todo?._id]
+  );
+
+  const handleSave = useCallback(() => {
+    if (!title) {
+      setIsNoTitleError(true);
+    } else {
+      onSave({
+        _id: todo?._id,
+        done,
+        title,
+        description,
+        deadline: dayjs(deadline).toISOString(),
+      });
+
+      setIsNoTitleError(false);
+    }
+  }, [deadline, description, done, onSave, title, todo?._id]);
+
+  const isDeadlineExpire = useMemo(() => {
+    const today = dayjs();
+    const deadlineDate = dayjs(deadline).add(1, "day");
+
+    return deadlineDate.isBefore(today);
+  }, [deadline]);
+
+  return (
+    &lt;li className="todo-container">
+      &lt;div className="left">
+        {todo?._id &amp;&amp; (
+          &lt;Checkbox disabled={true} checked={done} onChange={handleCheck} />
+        )}
+      &lt;/div>
+
+      {open ? (
+        &lt;input
+          type="text"
+          value={title}
+          onChange={(e) => {
+            setTitle(e.currentTarget.value), setIsNoTitleError(false);
+          }}
+          placeholder={TITLE_PLACEHOLDER}
+          className="editable-title"
+        />
+      ) : (
+        &lt;span className={classNames("title", { strike: done })}>{title}&lt;/span>
+      )}
+      &lt;div className="right">
+        &lt;input
+          className={classNames({
+            expire: isDeadlineExpire,
+            "date-picker": open,
+          })}
+          type="date"
+          disabled={!open}
+          value={deadline}
+          min="1997-01-01"
+          max="2030-12-31"
+          placeholder="dd-mm-yyyy"
+          onChange={(e) => setDeadline(e.target.value)}
+        />
+        &lt;OpenButton
+          open={open}
+          onClick={() => {
+            onOpen(open ? "" : todo._id);
+          }}
+        />
+      &lt;/div>
+
+      {open &amp;&amp; (
+        &lt;>
+          &lt;div className="left">
+            &lt;div className="left-controls">
+              &lt;Button onClick={handleSave}>{SAVE_BUTTON_TEXT}&lt;/Button>
+
+              {isNoTitleError &amp;&amp; (
+                &lt;span className="error">{NO_TITLE_ERROR_TEXT}&lt;/span>
+              )}
+            &lt;/div>
+          &lt;/div>
+          &lt;textarea
+            name="description"
+            cols="30"
+            rows="4"
+            value={description}
+            onChange={(e) => setDescription(e.currentTarget.value)}
+            placeholder={DESCRIPTION_PLACEHOLDER}
+            className="editable-description"
+          >&lt;/textarea>
+          &lt;div className="right">
+            &lt;div className="right-controls">
+              {todo?._id &amp;&amp; &lt;TodoAttachment todo={todo} />}
+              &lt;Button onClick={() => onDelete(todo._id)}>
+                {REMOVE_BUTTON_TEXT}
+              &lt;/Button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/>
+      )}
+    &lt;/li>
+  );
+};
+
+Todo.propTypes = TodoPropTypes;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Loading.html">Loading</a></li><li><a href="Todo.html">Todo</a></li><li><a href="TodoAttachment.html">TodoAttachment</a></li><li><a href="TodoList.html">TodoList</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_id">_id</a></li><li><a href="global.html#description">description</a></li><li><a href="global.html#done">done</a></li><li><a href="global.html#fileId">fileId</a></li><li><a href="global.html#fileName">fileName</a></li><li><a href="global.html#title">title</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Thu Nov 24 2022 15:40:24 GMT+0300 (Moscow Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

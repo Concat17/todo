@@ -4,16 +4,18 @@ import {
   useUploadTodoAttachment,
   useGetTodoAttachment,
   useDeleteTodoAttachment,
-} from "../../../../hooks";
+} from "../../../../../hooks";
 
-import { LoadingSpinner } from "../../../LoadingSpinner";
-import { queryClient } from "../../../../utils";
-import { QUERY_KEYS } from "../../../../constants";
+import { LoadingSpinner } from "../../../../LoadingSpinner";
+import { queryClient } from "../../../../../utils";
+import { QUERY_KEYS } from "../../../../../constants";
 
-import { IconButton } from "../../../IconButton";
-import { CrossIcon } from "../../../Icons";
+import { IconButton } from "../../../../IconButton";
+import { CrossIcon } from "../../../../Icons";
 
-import "./TodoFile.less";
+import { TodoAttachmentPropTypes } from "./todoAttachmentPropTypes";
+
+import "./TodoAttachment.less";
 
 const Loading = () => (
   <div className="loading-container">
@@ -21,7 +23,23 @@ const Loading = () => (
   </div>
 );
 
-export const TodoFile = ({ todo }) => {
+const UPLOAD_BUTTON_TEXT = "Upload";
+
+/**
+ * Component for working with todo attachment.
+ *
+ * @component
+ * @example
+ * const todo = {
+ *   _id: "637e4e024535a372b431538e",
+ *   fileId: "637e9eabb880aa3b95af6247",
+ *   fileName: "test.txt";
+ * }
+ * return (
+ *    <TodoAttachment todo={todo} />}
+ * )
+ */
+export const TodoAttachment = ({ todo }) => {
   const [file, setFile] = useState();
 
   const { mutate: uploadAttachment, isLoading: isUploading } =
@@ -35,6 +53,7 @@ export const TodoFile = ({ todo }) => {
 
   const handleUploadAttachment = useCallback(
     (event) => {
+      // prevents page reload
       event.preventDefault();
       uploadAttachment(
         { file, todoId: todo._id },
@@ -82,7 +101,9 @@ export const TodoFile = ({ todo }) => {
   ) : (
     <form onSubmit={handleUploadAttachment} className="file-upload-form">
       <input type="file" onChange={(event) => setFile(event.target.files[0])} />
-      <button type="submit">Upload</button>
+      <button type="submit">{UPLOAD_BUTTON_TEXT}</button>
     </form>
   );
 };
+
+TodoAttachment.propTypes = TodoAttachmentPropTypes;

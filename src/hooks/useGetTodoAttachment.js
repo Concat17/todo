@@ -13,8 +13,6 @@ export const useGetTodoAttachment = ({ todoId, fileName }) =>
         responseType: "blob",
       };
 
-      console.log({ todoId, fileName });
-
       return axios
         .get(`${import.meta.env.VITE_API_URL}/file/download/${todoId}`, config)
         .then((response) => {

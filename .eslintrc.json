@@ -21,7 +21,11 @@
     "react/react-in-jsx-scope": "off",
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "double"],
-    "semi": ["error", "always"],
-    "react/prop-types": "off"
+    "semi": ["error", "always"]
+  },
+  "settings": {
+    "jsdoc": {
+      "mode": "typescript"
+    }
   }
 }

@@ -3,7 +3,9 @@ import classNames from "classnames";
 import dayjs from "dayjs";
 
 import { Checkbox, Button, OpenButton } from "../../..";
-import { TodoFile } from "./TodoFile";
+import { TodoAttachment } from "./components/TodoAttachment";
+
+import { TodoPropTypes } from "./todoPropTypes";
 
 import "./Todo.less";
 
@@ -15,7 +17,24 @@ const NO_TITLE_ERROR_TEXT = "Enter todo title";
 
 const deadlineDateFormat = "YYYY-MM-DD";
 
-export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
+/**
+ * Component for showing todo.
+ *
+ * @component
+ * @example
+ * const todo = {
+ *   _id: "637e4e024535a372b431538e",
+ *   done: false,
+ *   title: "to do homework",
+ * }
+ * const open = false;
+ * return (
+ *    <Todo todo={todo}  open={open} />
+ * )
+ *
+ */
+export const Todo = ({ todo, open, toggleDone, onOpen, onSave, onDelete }) => {
+  // todo fields
   const [done, setDone] = useState(!!todo?.done);
   const [title, setTitle] = useState(todo?.title || "");
   const [description, setDescription] = useState(todo?.description || "");
@@ -24,14 +43,15 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
       deadlineDateFormat
     )
   );
+  // state for validating no title error
   const [isNoTitleError, setIsNoTitleError] = useState(false);
 
   const handleCheck = useCallback(
     (done) => {
-      onCheck({ _id: todo._id, done: done });
+      toggleDone({ _id: todo._id, done: done });
       setDone(done);
     },
-    [onCheck, todo?._id]
+    [toggleDone, todo?._id]
   );
 
   const handleSave = useCallback(() => {
@@ -52,6 +72,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
 
   const isDeadlineExpire = useMemo(() => {
     const today = dayjs();
+    // today deadline is not expired yet, so adding 1 day to deadline
     const deadlineDate = dayjs(deadline).add(1, "day");
 
     return deadlineDate.isBefore(today);
@@ -60,9 +81,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
   return (
     <li className="todo-container">
       <div className="left">
-        {todo?._id && (
-          <Checkbox disabled={true} checked={done} onChange={handleCheck} />
-        )}
+        {todo?._id && <Checkbox checked={done} onChange={handleCheck} />}
       </div>
 
       {open ? (
@@ -122,7 +141,7 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
           ></textarea>
           <div className="right">
             <div className="right-controls">
-              {todo?._id && <TodoFile todo={todo} />}
+              {todo?._id && <TodoAttachment todo={todo} />}
               <Button onClick={() => onDelete(todo._id)}>
                 {REMOVE_BUTTON_TEXT}
               </Button>
@@ -133,3 +152,5 @@ export const Todo = ({ todo, open, onCheck, onOpen, onSave, onDelete }) => {
     </li>
   );
 };
+
+Todo.propTypes = TodoPropTypes;

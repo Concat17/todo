@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+// don't know how to write propTypes for props.style
 import "./IconBase.less";
 
 export const IconBase = (props) => {
