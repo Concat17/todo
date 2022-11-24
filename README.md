@@ -12,5 +12,5 @@
 - ReactQuery
 - Less
 
-Frontend выложен в сервисе [now.sh](https://vercel.com/)
-Backend сделан с исполльзованием Express и MongoDB и выложен в сервисе [Railway](https://railway.app/)
+Frontend выложен в сервисе [now.sh](https://vercel.com/).
+Backend сделан с исполльзованием Express и MongoDB и выложен в сервисе [Railway](https://railway.app/).
